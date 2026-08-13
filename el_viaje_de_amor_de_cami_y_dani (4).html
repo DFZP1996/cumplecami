@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El viaje de amor de Cami y Dani</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #ff4d6d;
+            --bg-color: #fff0f3;
+            --text-color: #333;
+            --card-bg: #ffffff;
+            
+            --eurotrip-primary: #fca311;
+            --eurotrip-bg: #14213d;
+            --eurotrip-text: #e5e5e5;
+            --eurotrip-card: #1f3669;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            transition: background-color 0.8s ease;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #ffb3c1, #ff4d6d);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header p {
+            font-size: 1.2em;
+            font-weight: 300;
+        }
+
+        /* Timeline Container */
+        .timeline {
+            position: relative;
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background-color: var(--primary-color);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+            border-radius: 10px;
+            z-index: 1; /* Línea por debajo */
+            transition: background-color 0.8s ease;
+        }
+
+        /* Timeline Items */
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            background-color: inherit;
+            width: 50%;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.6s ease-out;
+            z-index: 2; /* Contenedor general de la tarjeta por encima de la línea */
+        }
+
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .timeline-item::after {
+            content: '❤️';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            right: -15px;
+            background-color: white;
+            border: 4px solid var(--primary-color);
+            top: 20px;
+            border-radius: 50%;
+            z-index: 10; /* Emojis definitivamente por encima de la línea */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            transition: border-color 0.8s ease;
+        }
+
+        .left { left: 0; }
+        .right { left: 50%; }
+
+        .left::after { right: -15px; }
+        .right::after { left: -15px; }
+
+        /* Card Styling */
+        .content {
+            padding: 25px;
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            position: relative;
+            z-index: 3;
+        }
+
+        .date {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .content h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .content p {
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+
+        /* Eurotrip Section Overrides */
+        body.euro-mode { background-color: var(--eurotrip-bg); color: var(--eurotrip-text); }
+        body.euro-mode .timeline::after { background-color: var(--eurotrip-primary); }
+        .eurotrip .content { background-color: var(--eurotrip-card); color: var(--eurotrip-text); box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+        .eurotrip .date { background-color: var(--eurotrip-primary); color: #000; }
+        .eurotrip .content h2 { color: var(--eurotrip-primary); }
+        .eurotrip::after { border-color: var(--eurotrip-primary); content: '✈️'; z-index: 10; }
+
+        /* Media Grids */
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .placeholder {
+            background-color: #f8f9fa;
+            border: 2px dashed #ced4da;
+            border-radius: 8px;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7em;
+            color: #6c757d;
+            text-align: center;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        
+        .eurotrip .placeholder {
+            background-color: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.3);
+            color: #ccc;
+        }
+
+        .placeholder:hover {
+            transform: scale(1.05);
+            background-color: #e9ecef;
+        }
+
+        .eurotrip .placeholder:hover { background-color: rgba(255,255,255,0.2); }
+
+        .placeholder span { font-size: 1.5em; margin-bottom: 5px; }
+
+        /* Media Queries for Mobile */
+        @media screen and (max-width: 768px) {
+            .timeline::after { left: 31px; z-index: 1; }
+            .timeline-item { width: 100%; padding-left: 70px; padding-right: 25px; }
+            .left, .right { left: 0; }
+            .left::after, .right::after { left: 16px; z-index: 10; }
+        }
+
+        .euro-banner {
+            text-align: center;
+            padding: 50px 20px;
+            background: linear-gradient(to right, var(--eurotrip-bg), #1a2a50, var(--eurotrip-bg));
+            color: var(--eurotrip-primary);
+            font-family: 'Dancing Script', cursive;
+            font-size: 3em;
+            margin: 40px 0;
+            border-top: 2px solid var(--eurotrip-primary);
+            border-bottom: 2px solid var(--eurotrip-primary);
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.8s ease-out;
+        }
+
+        .euro-banner.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .ending-text {
+            text-align: center;
+            padding: 60px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.2em;
+            line-height: 1.8;
+            font-family: 'Dancing Script', cursive;
+            color: var(--primary-color);
+        }
+        
+        .euro-mode .ending-text { color: var(--eurotrip-primary); }
+
+        /* Lightbox Styles */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .lightbox.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            opacity: 1;
+        }
+
+        .lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 80vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .lightbox.active .lightbox-content {
+            transform: scale(1);
+        }
+
+        .lightbox-media {
+            max-width: 90vw;
+            max-height: 80vh;
+            border: 5px solid white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            object-fit: contain;
+            display: none; /* Se muestra por JS */
+        }
+
+        .lightbox-caption {
+            color: white;
+            margin-top: 15px;
+            font-size: 1.2em;
+            font-weight: 300;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10000;
+            background: rgba(255,255,255,0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            line-height: 1;
+            transition: background 0.3s;
+        }
+
+        .close-btn:hover {
+            background: rgba(255,255,255,0.4);
+        }
+
+        body.no-scroll {
+            overflow: hidden;
+        }
+
+        .media-grid img, .media-grid video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            background-color: #f8f9fa; /* Color de fondo por si tarda en cargar */
+        }
+        
+        .media-grid img:hover, .media-grid video:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Icono de play sobre los videos en el grid */
+        .video-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+        }
+        .video-container::after {
+            content: '▶';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 1.5em;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            pointer-events: none; /* Para que el clic pase al video */
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>El viaje de amor de Cami y Dani</h1>
+        <p>Una historia que empezó con un swipe y se convirtió en mi vida entera</p>
+    </header>
+
+    <div class="timeline">
+        
+        <!-- Evento 1 -->
+        <div class="timeline-item left">
+            <div class="content">
+                <span class="date">30 de Marzo, 2025</span>
+                <h2>El primer encuentro</h2>
+                <p>Después de unos días de conexión a través de una pantalla tras coincidir en Tinder, la magia se hizo real. Ese 30 de marzo nuestros ojos se encontraron por primera vez en persona. Aquí está esa primera foto que me enviaste, el inicio de todo.</p>
+                <div class="media-grid">
+                    <img src="WhatsApp Image 2026-08-13 at 7.46.50 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150x150/ff4d6d/white?text=Foto';" onclick="openLightbox(this.src, 'El primer encuentro', 'image')">
+                </div>
+            </div>
+        </div>
+
+        <!-- Evento 2 -->
+        <div class="timeline-item right">
+            <div class="content">
+                <span class="date">16 al 20 de Abril, 2025</span>
+                <h2>Termales del Otoño</h2>
+                <p>Días de calor, agua y risas. Cada instante a tu lado se sentía como un refugio perfecto. Nuestro primer paseíto juntos.</p>
+                <div class="media-grid">
+                    <img src="WhatsApp Image 2026-08-13 at 7.46.50 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Termales del Otoño', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.46.55 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Termales del Otoño', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.46.58 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Termales del Otoño', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.46.58 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Termales del Otoño', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.46.58 AM (2).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Termales del Otoño', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.46.59 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Termales del Otoño', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.46.59 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Termales del Otoño', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.46.59 AM (2).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Termales del Otoño', 'image')">
+                    <div class="video-container" onclick="openLightbox('WhatsApp Video 2026-08-13 at 7.47.04 AM.mp4', 'Termales del Otoño', 'video')">
+                        <video src="WhatsApp Video 2026-08-13 at 7.47.04 AM.mp4" muted loop playsinline></video>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evento 3 -->
+        <div class="timeline-item left">
+            <div class="content">
+                <span class="date">3 y 4 de Mayo, 2025</span>
+                <h2>¡Oficialmente Novios!</h2>
+                <p>Un fin de semana inolvidable. Empezamos caminando por el Jardín Botánico de Cali, descansamos en el hotel por el Peñón y bailamos en La Pérgola. Al otro día madrugamos para la Maratón... pero el mejor premio del mundo fue en la tarde: despidiéndonos en la calle, me pediste que fuera tu novio. ❤️</p>
+                <div class="media-grid">
+                    <img src="WhatsApp Image 2026-08-13 at 7.57.31 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, '¡Oficialmente Novios!', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.57.31 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, '¡Oficialmente Novios!', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.57.32 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, '¡Oficialmente Novios!', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.57.33 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, '¡Oficialmente Novios!', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.57.34 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, '¡Oficialmente Novios!', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.57.35 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, '¡Oficialmente Novios!', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.57.35 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, '¡Oficialmente Novios!', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.57.36 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, '¡Oficialmente Novios!', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.57.37 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, '¡Oficialmente Novios!', 'image')">
+                    <div class="video-container" onclick="openLightbox('WhatsApp Video 2026-08-13 at 7.57.42 AM.mp4', '¡Oficialmente Novios!', 'video')">
+                        <video src="WhatsApp Video 2026-08-13 at 7.57.42 AM.mp4" muted loop playsinline></video>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evento 4 -->
+        <div class="timeline-item right">
+            <div class="content">
+                <span class="date">12 al 16 de Junio, 2025</span>
+                <h2>Magia en La Guajira</h2>
+                <p>Tuvimos que esperar más de un mes para volvernos a ver, con esa distancia entre Pereira y Cali. Pero la espera valió cada maldito segundo. La Guajira nos regaló atardeceres mágicos y nos demostró que no hay distancia que nos separe.</p>
+                <div class="media-grid">
+                    <img src="WhatsApp Image 2026-08-13 at 7.59.32 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Magia en La Guajira', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.59.33 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Magia en La Guajira', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.59.33 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Magia en La Guajira', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.59.33 AM (2).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Magia en La Guajira', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.59.33 AM (3).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Magia en La Guajira', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.59.34 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Magia en La Guajira', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.59.34 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Magia en La Guajira', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.59.35 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Magia en La Guajira', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.59.35 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Magia en La Guajira', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 7.59.36 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Magia en La Guajira', 'image')">
+                </div>
+            </div>
+        </div>
+
+        <!-- Evento 5 -->
+        <div class="timeline-item left">
+            <div class="content">
+                <span class="date">27 al 30 de Junio, 2025</span>
+                <h2>Aventuras en el Eje Cafetero</h2>
+                <p>Perdiéndonos entre montañas, respirando verde, tomando café y alimentando este amor con cada nueva aventura por el Eje Cafetero.</p>
+                <div class="media-grid">
+                    <img src="WhatsApp Image 2026-08-13 at 8.00.44 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Eje Cafetero', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.00.44 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Eje Cafetero', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.00.45 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Eje Cafetero', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.00.45 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Eje Cafetero', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.00.46 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Eje Cafetero', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.00.47 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Eje Cafetero', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.00.48 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Eje Cafetero', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.00.48 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Eje Cafetero', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.00.49 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Eje Cafetero', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.00.49 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Eje Cafetero', 'image')">
+                </div>
+            </div>
+        </div>
+
+        <!-- Evento 6 -->
+        <div class="timeline-item right">
+            <div class="content">
+                <span class="date">12 de Julio, 2025</span>
+                <h2>Cerros y Salsa en Cali</h2>
+                <p>Subimos las Tres Cruces demostrando que somos un equipo para todo. Y en la noche, dejamos el alma en el Mulato Cabaret viendo bailar salsa. ¡Pura candela y puro amor!</p>
+                <div class="media-grid">
+                    <img src="WhatsApp Image 2026-08-13 at 8.01.12 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Cerros y Salsa en Cali', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.01.13 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Cerros y Salsa en Cali', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.01.13 AM (2).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Cerros y Salsa en Cali', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.01.13 AM (3).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Cerros y Salsa en Cali', 'image')">
+                </div>
+            </div>
+        </div>
+
+        <!-- Evento 7 -->
+        <div class="timeline-item left">
+            <div class="content">
+                <span class="date">26 de Julio, 2025</span>
+                <h2>Caminando Pereira</h2>
+                <p>Recorriendo las calles de tu ciudad, haciendo nuestros los rincones de Pereira. Caminar de tu mano siempre será mi plan favorito.</p>
+                <div class="media-grid">
+                    <img src="WhatsApp Image 2026-08-13 at 8.01.32 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Caminando Pereira', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.01.32 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Caminando Pereira', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.01.32 AM (2).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'Caminando Pereira', 'image')">
+                </div>
+            </div>
+        </div>
+
+        <!-- Evento 8 -->
+        <div class="timeline-item right">
+            <div class="content">
+                <span class="date">20 de Septiembre, 2025</span>
+                <h2>El símbolo de nuestra unión</h2>
+                <p>Un día precioso aquí en Cali. Decidimos comprarnos los anillos que sellan nuestra unión, una promesa silenciosa y hermosa de elegirnos, cuidarnos y amarnos todos los días.</p>
+                <div class="media-grid">
+                    <img src="WhatsApp Image 2026-08-13 at 8.02.09 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'El símbolo de nuestra unión', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.02.09 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'El símbolo de nuestra unión', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.02.09 AM (2).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'El símbolo de nuestra unión', 'image')">
+                </div>
+            </div>
+        </div>
+
+        <!-- Evento 9 (Foto Movida Aquí) -->
+        <div class="timeline-item left">
+            <div class="content">
+                <span class="date">13 de Octubre, 2025</span>
+                <h2>El "Hasta Pronto"</h2>
+                <p>Nuestro último encuentro del año. El aire tenía un toque de melancolía y mucho suspenso... Tres días después, el 16 de octubre, te devolvías a vivir a España. Lloré, te extrañé antes de que te fueras, pero sabía que nuestro amor volaría contigo cruzando el océano.</p>
+                <div class="media-grid">
+                    <!-- Foto movida desde la tarjeta de Madrid -->
+                    <img src="WhatsApp Image 2026-08-13 at 8.02.28 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/ff4d6d/fff?text=Foto';" onclick="openLightbox(this.src, 'El Hasta Pronto', 'image')">
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- End First Timeline -->
+
+    <!-- EUROTRIP SECTION BANNER -->
+    <div id="eurotrip-start" class="euro-banner">
+        ✨ Nuestro Eurotrip de Amor ✨<br>
+        <span style="font-size:0.5em; font-family:'Poppins', sans-serif;">Un continente nuevo, el mismo amor profundo</span>
+    </div>
+
+    <div class="timeline" id="eurotrip-timeline">
+
+        <!-- Evento 10 (Sin la primera foto) -->
+        <div class="timeline-item eurotrip left">
+            <div class="content">
+                <span class="date">23 al 24 de Marzo, 2026</span>
+                <h2>El Gran Reencuentro en Madrid</h2>
+                <p>El 23 salí desde Cali con el corazón a mil. El 24 por la mañana aterricé en Madrid y ahí estabas, esperándome. Caer en tus brazos fue como volver a casa. Ese mismo día recorrimos la ciudad, juntos de nuevo.</p>
+                <div class="media-grid">
+                    <img src="WhatsApp Image 2026-08-13 at 8.04.09 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Madrid', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.04.09 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Madrid', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.04.10 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Madrid', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.04.10 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Madrid', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.04.11 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Madrid', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.04.12 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Madrid', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.04.13 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Madrid', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.04.14 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Madrid', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.04.16 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Madrid', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.04.17 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Madrid', 'image')">
+                </div>
+            </div>
+        </div>
+
+        <!-- Evento 11 -->
+        <div class="timeline-item eurotrip right">
+            <div class="content">
+                <span class="date">25 de Marzo, 2026</span>
+                <h2>Hola, Tenerife</h2>
+                <p>¡Y seguimos! El 25 volamos a Tenerife. El mar, el aire isleño y tú... mi combinación favorita en el mundo entero.</p>
+                <div class="media-grid">
+                    <img src="WhatsApp Image 2026-08-13 at 8.05.27 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Tenerife', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.05.28 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Tenerife', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.05.28 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Tenerife', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.05.28 AM (2).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Tenerife', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.05.29 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Tenerife', 'image')">
+                </div>
+            </div>
+        </div>
+
+        <!-- Evento 12 -->
+        <div class="timeline-item eurotrip left">
+            <div class="content">
+                <span class="date">26 de Marzo, 2026</span>
+                <h2>Oh là là, París!</h2>
+                <p>Llegamos a París. Dicen que es la ciudad del amor, pero honestamente, el verdadero amor ya lo llevaba yo de la mano. Calles hermosas y recuerdos imborrables.</p>
+                <div class="media-grid">
+                    <img src="WhatsApp Image 2026-08-13 at 8.07.47 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'París', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.07.47 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'París', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.07.48 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'París', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.07.48 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'París', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.07.49 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'París', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.07.50 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'París', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.07.51 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'París', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.07.52 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'París', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.07.54 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'París', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.07.55 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'París', 'image')">
+                </div>
+            </div>
+        </div>
+
+        <!-- Evento 13 -->
+        <div class="timeline-item eurotrip right">
+            <div class="content">
+                <span class="date">28 de Marzo, 2026</span>
+                <h2>Dulce Brujas</h2>
+                <p>Salimos desde París y después del mediodía llegamos a Brujas (Bélgica). Parecía un cuento de hadas. Probamos las cremas típicas de allá, endulzándonos la vida en cada esquina.</p>
+                <div class="media-grid">
+                    <img src="WhatsApp Image 2026-08-13 at 8.08.26 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Brujas', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.08.26 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Brujas', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.08.27 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Brujas', 'image')">
+                    <div class="video-container" onclick="openLightbox('WhatsApp Video 2026-08-13 at 8.08.30 AM.mp4', 'Brujas', 'video')">
+                        <video src="WhatsApp Video 2026-08-13 at 8.08.30 AM.mp4" muted loop playsinline></video>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evento 14 -->
+        <div class="timeline-item eurotrip left">
+            <div class="content">
+                <span class="date">28 de Marzo, 2026 (Noche)</span>
+                <h2>Luces de Amberes</h2>
+                <p>Esa misma noche nos fuimos a Amberes. Caminar bajo las luces de la ciudad le dio un toque mágico a nuestra travesía en bus por Europa.</p>
+                <div class="media-grid">
+                    <img src="WhatsApp Image 2026-08-13 at 8.09.17 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Amberes', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.09.17 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Amberes', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.09.18 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Amberes', 'image')">
+                </div>
+            </div>
+        </div>
+
+        <!-- Evento 15 -->
+        <div class="timeline-item eurotrip right">
+            <div class="content">
+                <span class="date">29 de Marzo, 2026</span>
+                <h2>Canales de Ámsterdam</h2>
+                <p>Llegamos a Ámsterdam. Puentes, canales hermosos y nosotros perdiéndonos entre bicicletas y paisajes de postal.</p>
+                <div class="media-grid">
+                    <img src="WhatsApp Image 2026-08-13 at 8.10.16 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Ámsterdam', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.10.17 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Ámsterdam', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.10.17 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Ámsterdam', 'image')">
+                    <div class="video-container" onclick="openLightbox('WhatsApp Video 2026-08-13 at 8.10.22 AM.mp4', 'Ámsterdam', 'video')">
+                        <video src="WhatsApp Video 2026-08-13 at 8.10.22 AM.mp4" muted loop playsinline></video>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evento 16 -->
+        <div class="timeline-item eurotrip left">
+            <div class="content">
+                <span class="date">30 de Marzo, 2026</span>
+                <h2>El encanto de Estrasburgo</h2>
+                <p>Ya en Francia de nuevo, Estrasburgo nos envolvió con su arquitectura maravillosa. Un rincón bellísimo para seguir escribiendo nuestra historia.</p>
+                <div class="media-grid">
+                    <img src="WhatsApp Image 2026-08-13 at 8.11.18 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Estrasburgo', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.11.19 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Estrasburgo', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.11.19 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Estrasburgo', 'image')">
+                </div>
+            </div>
+        </div>
+
+        <!-- Evento 17 -->
+        <div class="timeline-item eurotrip right">
+            <div class="content">
+                <span class="date">30 de Marzo, 2026 (Noche)</span>
+                <h2>Un Pub en Dijon</h2>
+                <p>La noche nos agarró en Dijon. Nos metimos a un pub a refugiarnos, tomar algo y reír mientras esperábamos nuestro bus hacia el hielo.</p>
+                <div class="media-grid">
+                    <img src="WhatsApp Image 2026-08-13 at 8.11.41 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Dijon', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.11.41 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Dijon', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.11.42 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Dijon', 'image')">
+                </div>
+            </div>
+        </div>
+
+        <!-- Evento 18 -->
+        <div class="timeline-item eurotrip left">
+            <div class="content">
+                <span class="date">31 de Marzo, 2026</span>
+                <h2>Blanco Chamonix</h2>
+                <p>¡Llegamos a Chamonix y el clima nos tenía un regalo! Nos recibió con una nevada espectacular. Todo estaba blanco, limpiecito y hermoso... como un lienzo nuevo para nosotros.</p>
+                <div class="media-grid">
+                    <img src="WhatsApp Image 2026-08-13 at 8.12.23 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Chamonix', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.12.24 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Chamonix', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.12.24 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Chamonix', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.12.26 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Chamonix', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.12.27 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Chamonix', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.12.28 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Chamonix', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.12.28 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Chamonix', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.12.28 AM (2).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Chamonix', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.12.28 AM (3).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Chamonix', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.12.29 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Chamonix', 'image')">
+                </div>
+            </div>
+        </div>
+
+        <!-- Evento 19 -->
+        <div class="timeline-item eurotrip right">
+            <div class="content">
+                <span class="date">1 de Abril, 2026</span>
+                <h2>Suspiros en Annecy</h2>
+                <p>La "Venecia de los Alpes" se robó nuestros suspiros. Aguas cristalinas y montañitas hermosas siendo testigos de cuánto te amo.</p>
+                <div class="media-grid">
+                    <img src="WhatsApp Image 2026-08-13 at 8.13.01 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Annecy', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.13.01 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Annecy', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.13.02 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Annecy', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.13.02 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Annecy', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.13.02 AM (2).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Annecy', 'image')">
+                </div>
+            </div>
+        </div>
+
+        <!-- Evento 20 -->
+        <div class="timeline-item eurotrip left">
+            <div class="content">
+                <span class="date">2 de Abril, 2026</span>
+                <h2>Buongiorno Turín!</h2>
+                <p>¡Llegamos a Italia! Turín marcó el súper final de nuestra larguísima y hermosa travesía en bus desde París. Pasta, pizza y tú.</p>
+                <div class="media-grid">
+                    <img src="WhatsApp Image 2026-08-13 at 8.13.45 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Turín', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.13.45 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Turín', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.13.46 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Turín', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.13.46 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Turín', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.13.47 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Turín', 'image')">
+                </div>
+            </div>
+        </div>
+
+        <!-- Evento 21 -->
+        <div class="timeline-item eurotrip right">
+            <div class="content">
+                <span class="date">3 de Abril, 2026</span>
+                <h2>Volando a Madrid</h2>
+                <p>Tomamos un avión de regreso a Madrid. Con el alma llena de paisajes increíbles y el corazón explotando de amor y gratitud por haber vivido todo esto contigo.</p>
+            </div>
+        </div>
+
+        <!-- Evento 22 -->
+        <div class="timeline-item eurotrip left">
+            <div class="content">
+                <span class="date">Sábado 4 de Abril, 2026</span>
+                <h2>De Fiesta por Madrid</h2>
+                <p>Teníamos que cerrar el viaje celebrando la vida. Nos fuimos de rumba a una discoteca en Madrid, bailando y riendo hasta el cansancio.</p>
+            </div>
+        </div>
+
+        <!-- Evento 23 -->
+        <div class="timeline-item eurotrip right">
+            <div class="content">
+                <span class="date">Domingo 5 de Abril, 2026</span>
+                <h2>Despedida en Segovia</h2>
+                <p>Nuestro último paseo antes de mi partida. El inmenso acueducto de Segovia fue el telón de fondo de nuestro último día de turismo. Caminar abrazados sabiendo que pronto tocaría un "hasta luego".</p>
+                <div class="media-grid">
+                    <img src="WhatsApp Image 2026-08-13 at 8.18.45 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Segovia', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.18.46 AM.jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Segovia', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.18.46 AM (1).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Segovia', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.18.46 AM (2).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Segovia', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.18.46 AM (3).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Segovia', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.18.46 AM (4).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Segovia', 'image')">
+                    <img src="WhatsApp Image 2026-08-13 at 8.18.46 AM (5).jpeg" onerror="this.onerror=null; this.src='https://placehold.co/150/14213d/fff?text=Foto';" onclick="openLightbox(this.src, 'Segovia', 'image')">
+                </div>
+            </div>
+        </div>
+
+        <!-- Evento 24 -->
+        <div class="timeline-item eurotrip left">
+            <div class="content">
+                <span class="date">6 de Abril, 2026</span>
+                <h2>Regreso a Cali</h2>
+                <p>El día de regresar. Un abrazo apretado en el aeropuerto que no fue un adiós, sino un motor de esperanza. Ese día comprendimos que el amor que hemos construido es inquebrantable, más fuerte que cualquier distancia. Una promesa firme de que nos volveríamos a encontrar para seguir caminando juntos de la mano.</p>
+            </div>
+        </div>
+
+    </div> <!-- End Eurotrip Timeline -->
+
+    <!-- Final Message -->
+    <div class="ending-text timeline-item visible" style="transform:none; margin: 40px auto;">
+        <h2>Hoy y Siempre...</h2>
+        <p style="font-family: 'Poppins', sans-serif; font-size: 1.1em; text-align: justify; text-align-last: center;">
+            Han pasado los meses y cada día me doy cuenta de algo hermoso: este viaje no se trata solo de los lugares increíbles que hemos visitado, sino del hogar que hemos construido juntos. A pesar de los kilómetros, de las esperas infinitas, de los aviones y los husos horarios, nuestro amor se ha vuelto más fuerte, más paciente y muchísimo más profundo.
+            <br><br>
+            Gracias, mi Cami, por ser mi compañero de aventuras, mi paz en medio del caos y mi lugar favorito en el mundo. No importa en qué país estemos, mi destino siempre serás tú. ¡Que este viaje de amor nunca termine! Te amo con toda mi alma, tu Dani.
+        </p>
+    </div>
+
+    <!-- Contenedor del Lightbox -->
+    <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
+        <span class="close-btn" onclick="closeLightbox(event, true)">&times;</span>
+        <div class="lightbox-content">
+            <img id="lightbox-img" class="lightbox-media" src="" alt="Ampliación">
+            <video id="lightbox-video" class="lightbox-media" src="" controls playsinline></video>
+        </div>
+        <div id="lightbox-caption" class="lightbox-caption">Título de la imagen</div>
+    </div>
+
+    <script>
+        // Scroll Animation Logic using IntersectionObserver
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    
+                    // Comprobar si entramos en zona Eurotrip
+                    if (entry.target.id === 'eurotrip-start' || entry.target.classList.contains('eurotrip')) {
+                        document.body.classList.add('euro-mode');
+                    } else if (!entry.target.classList.contains('eurotrip') && entry.target.id !== 'eurotrip-start' && !entry.target.classList.contains('ending-text')) {
+                        document.body.classList.remove('euro-mode');
+                    }
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.timeline-item, .euro-banner').forEach(item => {
+            observer.observe(item);
+        });
+
+        // Trigger Eurotrip background when scrolling up/down naturally
+        window.addEventListener('scroll', () => {
+            const euroBanner = document.getElementById('eurotrip-start');
+            const rect = euroBanner.getBoundingClientRect();
+            
+            // Si el banner de Eurotrip está por encima de la mitad de la pantalla
+            if (rect.top < window.innerHeight / 2) {
+                document.body.classList.add('euro-mode');
+            } else {
+                document.body.classList.remove('euro-mode');
+            }
+        });
+
+        // --- Lógica del Lightbox ---
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxVideo = document.getElementById('lightbox-video');
+        const lightboxCaption = document.getElementById('lightbox-caption');
+
+        function openLightbox(src, captionText, type) {
+            lightboxCaption.textContent = captionText;
+            
+            if(type === 'video') {
+                lightboxImg.style.display = 'none';
+                lightboxVideo.src = src;
+                lightboxVideo.style.display = 'block';
+                lightboxVideo.play();
+            } else {
+                lightboxVideo.style.display = 'none';
+                lightboxVideo.pause();
+                lightboxImg.src = src;
+                lightboxImg.style.display = 'block';
+            }
+
+            lightbox.style.display = 'flex';
+            document.body.classList.add('no-scroll');
+
+            setTimeout(() => {
+                lightbox.classList.add('active');
+            }, 10);
+        }
+
+        function closeLightbox(event, forceClose = false) {
+            if (forceClose || event.target === lightbox) {
+                lightbox.classList.remove('active');
+                
+                // Pausar el video si se está reproduciendo al cerrar
+                lightboxVideo.pause();
+                
+                setTimeout(() => {
+                    lightbox.style.display = 'none';
+                    document.body.classList.remove('no-scroll');
+                    
+                    // Limpiar sources para evitar problemas de carga
+                    setTimeout(() => {
+                        lightboxImg.src = '';
+                        lightboxVideo.src = '';
+                    }, 100);
+                }, 300);
+            }
+        }
+        
+        // Añadir soporte para cerrar con la tecla Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox(event, true);
+            }
+        });
+        
+        // Soporte básico para deslizar hacia abajo para cerrar (Swipe down en móviles)
+        let touchStartY = 0;
+        let touchEndY = 0;
+        
+        lightbox.addEventListener('touchstart', e => {
+            touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        lightbox.addEventListener('touchend', e => {
+            touchEndY = e.changedTouches[0].screenY;
+            if (touchEndY - touchStartY > 50) { // Si desliza más de 50px hacia abajo
+                closeLightbox(e, true);
+            }
+        }, { passive: true });
+    </script>
+</body>
+</html>
